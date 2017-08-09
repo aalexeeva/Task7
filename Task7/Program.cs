@@ -75,22 +75,45 @@ namespace Task7
             return currentSymbol;
         }
 
-        public static string Action(string first)
+        public static string Action(string first, bool ok)
         {
-            string second = first.Substring(0, first.Length/2);
-            string third = first.Substring(first.Length / 2, first.Length - first.Length / 2);
-            if (second == third) Action(second);
-            else
+            string second, third, lol = string.Empty;
+            int current = 1, i = 0;
+            int[] array = new int[first.Length];
+            for (int step = first.Length / 2; step > 0; step /= 2)
             {
-                WriteLine("Вектор функции после удаления фиктивных переменных: ");
-                return first;
+                second = first.Substring(0, first.Length/2);
+                third = first.Substring(first.Length / 2, first.Length - first.Length / 2);
+                if (second == third)
+                {
+                    array[i] = current;
+                    i++;
+                }
+                else
+                {
+                    lol += Action(third, false);
+                    ok = true;
+                }
+                current++;
+                first = second;
             }
+            if (ok)
+            {
+                int[] result = array.Distinct().ToArray();
+                foreach (var t in result)
+                {
+                    if (t != 0) WriteLine("Фиктивной переменной является переменная " + t);
+                }
+            }
+            return first + lol;
         }
 
         static void Main(string[] args)
         {
             WriteLine("Введите булеву функцию: ");
             string function = Input();
+            string answer = Action(function, true);
+            WriteLine("Вектор функции после удаления фиктивных переменных: " + answer);
             Read();
         }
     }
