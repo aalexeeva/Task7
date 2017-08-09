@@ -9,6 +9,13 @@ namespace Task7
 {
     class Program
     {
+        public static bool Degree(int a) // проверка, является ли длина введенной функции степенью двойки
+        {
+            if (a == 2) return true;
+            else if (a % 2 == 0) return Degree(a / 2);
+            else return false;
+        }
+
         public static string Input() // функция проверки ввода, разрешающая вводить только 0 и 1
         {
             string currentSymbol = string.Empty; // переменная для введенного символа
@@ -38,15 +45,15 @@ namespace Task7
                             }
                         }
                         convertResult = false;
-                        if (input == 13)
+                        if (input == 13) // если нажат интер
                         {
-                            ok = currentSymbol.Length % 2 == 0;
-                            if (!ok)
+                            ok = Degree(currentSymbol.Length); // проверка длины ввода
+                            if (!ok) // если ввод некорректен
                             {
                                 WriteLine("\nДлина функции не может быть нечетным числом, необходимо продолжить ввод");
                                 Write(currentSymbol);
                             }
-                            else
+                            else // если ввод корректен
                             {
                                 WriteLine("\nФункция введена корректно");
                                 break;
