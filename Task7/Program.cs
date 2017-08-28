@@ -73,7 +73,7 @@ namespace Task7
                 VariableCount++;
 
                 var arr = new string[func.Length * 2]; // массив с разделенной функцией
-                for (int i = 0; i < func.Length; i++) // разделение функции на две половины
+                for (var i = 0; i < func.Length; i++) // разделение функции на две половины
                 {
                     arr[2 * i] = func[i].Substring(0, func[i].Length / 2); 
                     arr[2 * i + 1] = func[i].Substring(func[i].Length / 2);
@@ -111,21 +111,41 @@ namespace Task7
 
             changed = true;
             var p = new string[func.Length / 2];
-            for (int i = 0; i < func.Length / 2; i++)
+            for (var i = 0; i < func.Length / 2; i++)
                 p[i] = func[2 * i];
             return p;
         }
 
+        public static bool Exit() // выход из программы
+        {
+            WriteLine("Желаете начать сначала или нет? \nВведите да или нет");
+            var word = Convert.ToString(ReadLine()); // ответ пользователя
+            Clear();
+            if (word == "да" || word == "Да" || word == "ДА")
+            {
+                Clear();
+                return false;
+            }
+            Clear();
+            WriteLine("Вы ввели 'нет' или что-то непонятное. Нажмите любую клавишу, чтобы выйти из программы.");
+            ReadKey();
+            return true;
+        }
+
         static void Main(string[] args)
         {
-            WriteLine("Введите булеву функцию: ");
-            string function = Input();
-            _useless = new bool[(int)Math.Log(function.Length, 2)];
-            var answer = Action(new[] { function }, out bool c);
-            for (int i = 0; i < _useless.Length; i++)
-                WriteLine(_useless[i] ? "{0} переменная фиктивна" : "{0} переменная существенна", i + 1);
-            WriteLine("Вектор функции после удаления фиктивных переменных: " + answer[0]);
-            ReadKey(true);
+            bool okay;
+            do
+            {
+                WriteLine("Введите булеву функцию: ");
+                var function = Input();
+                _useless = new bool[(int) Math.Log(function.Length, 2)];
+                var answer = Action(new[] {function}, out bool c);
+                for (var i = 0; i < _useless.Length; i++)
+                    WriteLine(_useless[i] ? "{0} переменная фиктивна" : "{0} переменная существенна", i + 1);
+                WriteLine("Вектор функции после удаления фиктивных переменных: " + answer[0]);
+                okay = Exit();
+            } while (!okay);
         }
     }
 }
