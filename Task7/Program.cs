@@ -8,8 +8,7 @@ namespace Task7
         public static bool Degree(int a) // проверка, является ли длина введенной функции степенью двойки
         {
             if (a == 2) return true;
-            else if (a % 2 == 0) return Degree(a / 2);
-            else return false;
+            return a % 2 == 0 && Degree(a / 2);
         }
 
         public static string Input() // функция проверки ввода, разрешающая вводить только 0 и 1
@@ -124,8 +123,7 @@ namespace Task7
             _useless = new bool[(int)Math.Log(function.Length, 2)];
             var answer = Action(new[] { function }, out bool c);
             for (int i = 0; i < _useless.Length; i++)
-                if (_useless[i])
-                    WriteLine("{0} переменная фиктивна", i + 1);
+                WriteLine(_useless[i] ? "{0} переменная фиктивна" : "{0} переменная существенна", i + 1);
             WriteLine("Вектор функции после удаления фиктивных переменных: " + answer[0]);
             ReadKey(true);
         }
