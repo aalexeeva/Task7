@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static System.Console;
 
 namespace Task7
@@ -19,61 +16,56 @@ namespace Task7
         public static string Input() // функция проверки ввода, разрешающая вводить только 0 и 1
         {
             string currentSymbol = string.Empty; // переменная для введенного символа
-            bool convertResult = false; // переменная, определяющая верно ли введен символ
-            bool ok = false;
+            bool ok;
             do
             {
-                try
+                while (true)
                 {
-                    while (!convertResult)
+                    ConsoleKeyInfo keyPress = ReadKey(true); // ввод символа
+                    // символ введен верно, если его код совпадает с кодом нуля или единицы
+                    switch (keyPress.Key)
                     {
-                        ConsoleKeyInfo keyPress = ReadKey(true); // ввод символа
-                        int input = keyPress.KeyChar; // код введенного символа
-                        // символ введен верно, если его код совпадает с кодом нуля или единицы
-                        convertResult = Convert.ToInt32(input) == 48 || Convert.ToInt32(input) == 49;
-                        if (convertResult) // если символ введен верно, вывод его в консоль
-                        {
-                            if (input == 48)
+                        case ConsoleKey.D0:
+                            CursorLeft = 0;
+                            currentSymbol += "0";
+                            Write(currentSymbol);
+                            break;
+                        case ConsoleKey.D1:
+                            CursorLeft = 0;
+                            currentSymbol += "1";
+                            Write(currentSymbol);
+                            break;
+                        case ConsoleKey.Backspace:
+                            if (currentSymbol.Length > 0)
                             {
-                                Write(0);
-                                currentSymbol += "0";
+                                CursorLeft = 0;
+                                currentSymbol = currentSymbol.Substring(0, currentSymbol.Length - 1);
+                                Write("{0} ", currentSymbol);
+                                CursorLeft = currentSymbol.Length;
                             }
-                            else
-                            {
-                                Write(1);
-                                currentSymbol += "1";
-                            }
-                        }
-                        convertResult = false;
-                        if (input == 13) // если нажат интер
-                        {
-                            ok = Degree(currentSymbol.Length); // проверка длины ввода
-                            if (!ok) // если ввод некорректен
-                            {
-                                WriteLine("\nДлина функции не может быть нечетным числом, необходимо продолжить ввод");
-                                Write(currentSymbol);
-                            }
-                            else // если ввод корректен
-                            {
-                                WriteLine("\nФункция введена корректно");
-                                break;
-                            }
-                        }
+                            break;
+                    }
+
+                    if (keyPress.Key != ConsoleKey.Enter) continue;
+                    ok = Degree(currentSymbol.Length); // проверка длины ввода
+                    if (!ok) // если ввод некорректен
+                    {
+                        WriteLine("\nДлина функции не может быть нечетным числом, необходимо продолжить ввод");
+                        Write(currentSymbol);
+                    }
+                    else // если ввод корректен
+                    {
+                        WriteLine("\nФункция введена корректно");
+                        break;
                     }
                 }
-                catch (FormatException)
-                {
-                    WriteLine("Ошибка при вводе числа");
-                    ok = false;
-                }
-                catch (OverflowException)
-                {
-                    WriteLine("Ошибка при вводе числа");
-                    ok = false;
-                }
-            } while (!ok);
+            }
+            while (!ok);
+
             return currentSymbol;
         }
+
+
 
         public static string Action(string first, bool ok)
         {
