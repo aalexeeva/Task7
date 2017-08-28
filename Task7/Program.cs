@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using static System.Console;
 
 namespace Task7
@@ -65,48 +64,70 @@ namespace Task7
             return currentSymbol;
         }
 
+        public static int VariableCount = -1; // счетчик действий
+        private static bool[] _useless; // фиктивные переменные
 
-
-        public static string Action(string first, bool ok)
+        public static string[] Action(string[] func, out bool changed)
         {
-            string second, third, lol = string.Empty;
-            int current = 1, i = 0;
-            int[] array = new int[first.Length];
-            for (int step = first.Length / 2; step > 0; step /= 2)
+            if (func[0].Length != 1) // проверка длины исходной функции
             {
-                second = first.Substring(0, first.Length/2);
-                third = first.Substring(first.Length / 2, first.Length - first.Length / 2);
-                if (second == third)
+                VariableCount++;
+
+                var arr = new string[func.Length * 2]; // массив с разделенной функцией
+                for (int i = 0; i < func.Length; i++) // разделение функции на две половины
                 {
-                    array[i] = current;
-                    i++;
+                    arr[2 * i] = func[i].Substring(0, func[i].Length / 2); 
+                    arr[2 * i + 1] = func[i].Substring(func[i].Length / 2);
                 }
-                else
+
+                arr = Action(arr, out bool c); // проверка половин функции
+                if (c) // проверка на удаленные переменные
+                    func = arr;
+                else // создание вектора функции без фиктивных переменных
                 {
-                    lol += Action(third, false);
-                    ok = true;
+                    for (int i = 0; i < func.Length; i++)
+                        func[i] = arr[2 * i] + arr[2 * i + 1];
                 }
-                current++;
-                first = second;
+
+                _useless[VariableCount] = c;
             }
-            if (ok)
+
+            if (func.Length == 1) // если длина функции равна единице
             {
-                int[] result = array.Distinct().ToArray();
-                foreach (var t in result)
-                {
-                    if (t != 0) WriteLine("Фиктивной переменной является переменная " + t);
-                }
+                changed = false;
+                return func;
             }
-            return first + lol;
+
+            // проверка наличия фиктивной переменной
+            bool useless = true;
+            for (int i = 0; i < func.Length / 2 && useless; i++)
+                if (func[2 * i] != func[2 * i + 1])
+                    useless = false;
+
+            if (!useless) // если фиктивных переменных не найдено
+            {
+                changed = false;
+                return func;
+            }
+
+            changed = true;
+            var p = new string[func.Length / 2];
+            for (int i = 0; i < func.Length / 2; i++)
+                p[i] = func[2 * i];
+            return p;
         }
 
         static void Main(string[] args)
         {
             WriteLine("Введите булеву функцию: ");
             string function = Input();
-            string answer = Action(function, true);
-            WriteLine("Вектор функции после удаления фиктивных переменных: " + answer);
-            Read();
+            _useless = new bool[(int)Math.Log(function.Length, 2)];
+            var answer = Action(new[] { function }, out bool c);
+            for (int i = 0; i < _useless.Length; i++)
+                if (_useless[i])
+                    WriteLine("{0} переменная фиктивна", i + 1);
+            WriteLine("Вектор функции после удаления фиктивных переменных: " + answer[0]);
+            ReadKey(true);
         }
     }
 }
